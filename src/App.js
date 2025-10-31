@@ -6,6 +6,7 @@ class App {
       try {
         const purchaseAmount =
           await Console.readLineAsync('구입금액을 입력해 주세요.\n');
+
         this.purchaseAmountValidation(purchaseAmount);
         return purchaseAmount;
       } catch (error) {
@@ -19,8 +20,23 @@ class App {
       try {
         const winningNumbers =
           await Console.readLineAsync('당첨 번호를 입력해 주세요.\n');
+
         this.winningNumbersValidation(winningNumbers);
         return winningNumbers;
+      } catch (error) {
+        Console.print(error.message);
+      }
+    }
+  }
+
+  async getBonusNumber(winningNumbersArray) {
+    while (true) {
+      try {
+        const bonusNumber =
+          await Console.readLineAsync('보너스 번호를 입력해 주세요.\n');
+
+        this.bonusNumberValidation(bonusNumber, winningNumbersArray);
+        return bonusNumber;
       } catch (error) {
         Console.print(error.message);
       }
@@ -35,7 +51,7 @@ class App {
     const purchaseCount = purchaseAmount / 1000;
     Console.print(`${purchaseCount}개를 구매했습니다.`);
 
-    const lottoNumbers = this.generateRandomNumber(purchaseCount);
+    const lottoNumbers = this.generateRandomNumbers(purchaseCount);
     lottoNumbers.forEach((numbers) => {
       numbers.sort((a, b) => a - b);
       Console.print(`[${numbers.join(', ')}]`);
@@ -44,6 +60,12 @@ class App {
     Console.print('\n');
 
     const winningNumbers = await this.getWinningNumbers();
+
+    const winningNumbersArray = winningNumbers
+      .split(',')
+      .map((num) => Number(num.trim()));
+
+    const bonusNumber = await this.getBonusNumber(winningNumbersArray);
   }
 
   purchaseAmountValidation(purchaseAmount) {
@@ -66,7 +88,7 @@ class App {
     const nums = winningNumbers.split(',').map((num) => num.trim());
 
     nums.forEach((num) => {
-      if (!/^\d+$/.test(num)) {
+      if (!/^[1-9]\d*$/.test(num)) {
         throw new Error('[ERROR] 유효하지 않은 입력값입니다.');
       }
       if (num < 1 || num > 45) {
@@ -82,7 +104,27 @@ class App {
     }
   }
 
-  generateRandomNumber(count) {
+  bonusNumberValidation(bonusNumber, winningNumbersArray) {
+    if (bonusNumber.trim() === '') {
+      throw new Error('[ERROR] 입력값이 없습니다.');
+    }
+
+    if (!/^[1-9]\d*$/.test(bonusNumber)) {
+      throw new Error('[ERROR] 유효하지 않은 입력값입니다.');
+    }
+
+    const bonusNum = Number(bonusNumber);
+
+    if (bonusNum < 1 || bonusNum > 45) {
+      throw new Error('[ERROR] 숫자는 1부터 45 사이여야 합니다.');
+    }
+
+    if (winningNumbersArray.includes(bonusNum)) {
+      throw new Error('[ERROR] 보너스 번호가 당첨 번호와 중복됩니다.');
+    }
+  }
+
+  generateRandomNumbers(count) {
     const myLottoNumbersArray = [];
     for (let i = 0; i < count; i++) {
       const myLottoNumber = Random.pickUniqueNumbersInRange(1, 45, 6);
