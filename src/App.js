@@ -21,6 +21,14 @@ const PRIZE_MONEY = {
   SIX: '2,000,000,000원',
 };
 
+const PRIZE_MONEY_VALUE = {
+  THREE: 5000,
+  FOUR: 50000,
+  FIVE: 1500000,
+  BONUS: 30000000,
+  SIX: 2000000000,
+};
+
 class App {
   async getPurchaseAmount() {
     while (true) {
@@ -96,6 +104,7 @@ class App {
       bonusNumber,
     );
     this.printResults(stats);
+    this.printProfitResults(stats, purchaseCount);
   }
 
   purchaseAmountValidation(purchaseAmount) {
@@ -204,6 +213,17 @@ class App {
     ];
 
     messages.forEach((msg) => Console.print(msg));
+  }
+
+  printProfitResults(stats, purchaseAmount) {
+    let totalPrize = 0;
+    for (const key of Object.keys(stats)) {
+      totalPrize += stats[key] * PRIZE_MONEY_VALUE[key];
+    }
+
+    const profitRatio = Math.round((totalPrize / purchaseAmount) * 10000) / 100;
+
+    Console.print(`총 수익률은 ${profitRatio}%입니다.`);
   }
 }
 
