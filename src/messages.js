@@ -1,8 +1,10 @@
-const IO = Object.freeze({
+const IO_MESSAGES = Object.freeze({
   PURCHASE_PROMPT: '구입금액을 입력해 주세요.\n',
-  WINNING_NUMBERS_PROMPT: '당첨 번호를 입력해 주세요.\n',
-  BONUS_NUMBER_PROMPT: '보너스 번호를 입력해 주세요.\n',
-  PURCHASE_SUCCESS: (count) => `${count}개를 구매했습니다.`,
+  WINNING_NUMBERS_PROMPT: '\n당첨 번호를 입력해 주세요.\n',
+  BONUS_NUMBER_PROMPT: '\n보너스 번호를 입력해 주세요.\n',
+  PURCHASE_SUCCESS: (count) => `\n${count}개를 구매했습니다.`,
+  WINNING_STATISTICS: '\n당첨 통계',
+  DIVIDER: '---',
 });
 
 const ERROR_PREFIX = `[ERROR]`;
@@ -17,4 +19,4 @@ const ERROR_MESSAGES = Object.freeze({
   BONUS_NUMBER_DUPLICATE: `${ERROR_PREFIX} 보너스 번호가 당첨 번호와 중복됩니다.`,
 });
 
-export { IO, ERROR_MESSAGES };
+export { IO_MESSAGES, ERROR_MESSAGES };

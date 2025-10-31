@@ -1,16 +1,33 @@
 import { Console, Random } from '@woowacourse/mission-utils';
-import { ERROR_MESSAGES, IO } from './messages.js';
+import { ERROR_MESSAGES, IO_MESSAGES } from './messages.js';
 
 const LOTTO_PRICE = 1000;
 const LOTTO_COUNT = 6;
 const LOTTO_MIN = 1;
 const LOTTO_MAX = 45;
 
+const STATS_MAPPING = {
+  3: 'THREE',
+  4: 'FOUR',
+  5: 'FIVE',
+  6: 'SIX',
+};
+
+const PRIZE_MONEY = {
+  THREE: '5,000원',
+  FOUR: '50,000원',
+  FIVE: '1,500,000원',
+  BONUS: '30,000,000원',
+  SIX: '2,000,000,000원',
+};
+
 class App {
   async getPurchaseAmount() {
     while (true) {
       try {
-        const purchaseAmount = await Console.readLineAsync(IO.PURCHASE_PROMPT);
+        const purchaseAmount = await Console.readLineAsync(
+          IO_MESSAGES.PURCHASE_PROMPT,
+        );
 
         this.purchaseAmountValidation(purchaseAmount);
         return purchaseAmount;
@@ -24,7 +41,7 @@ class App {
     while (true) {
       try {
         const winningNumbers = await Console.readLineAsync(
-          IO.WINNING_NUMBERS_PROMPT,
+          IO_MESSAGES.WINNING_NUMBERS_PROMPT,
         );
 
         this.winningNumbersValidation(winningNumbers);
@@ -38,7 +55,9 @@ class App {
   async getBonusNumber(winningNumbersArray) {
     while (true) {
       try {
-        const bonusNumber = await Console.readLineAsync(IO.BONUS_NUMBER_PROMPT);
+        const bonusNumber = await Console.readLineAsync(
+          IO_MESSAGES.BONUS_NUMBER_PROMPT,
+        );
 
         this.bonusNumberValidation(bonusNumber, winningNumbersArray);
         return bonusNumber;
@@ -51,10 +70,8 @@ class App {
   async run() {
     const purchaseAmount = await this.getPurchaseAmount();
 
-    Console.print('\n');
-
     const purchaseCount = purchaseAmount / LOTTO_PRICE;
-    Console.print(IO.PURCHASE_SUCCESS(purchaseCount));
+    Console.print(IO_MESSAGES.PURCHASE_SUCCESS(purchaseCount));
 
     const lottoNumbers = this.generateRandomNumbers(purchaseCount);
     lottoNumbers.forEach((numbers) => {
@@ -62,15 +79,23 @@ class App {
       Console.print(`[${numbers.join(', ')}]`);
     });
 
-    Console.print('\n');
-
     const winningNumbers = await this.getWinningNumbers();
 
     const winningNumbersArray = winningNumbers
       .split(',')
-      .map((num) => num.trim());
+      .map((num) => Number(num.trim()));
 
     const bonusNumber = await this.getBonusNumber(winningNumbersArray);
+
+    Console.print(IO_MESSAGES.WINNING_STATISTICS);
+    Console.print(IO_MESSAGES.DIVIDER);
+
+    const stats = this.statsResult(
+      lottoNumbers,
+      winningNumbersArray,
+      bonusNumber,
+    );
+    this.printResults(stats);
   }
 
   purchaseAmountValidation(purchaseAmount) {
@@ -140,6 +165,45 @@ class App {
       myLottoNumbersArray.push(myLottoNumber);
     }
     return myLottoNumbersArray;
+  }
+
+  statsResult(lottoNumbers, winningNumbersArray, bonusNumber) {
+    const stats = {
+      THREE: 0,
+      FOUR: 0,
+      FIVE: 0,
+      BONUS: 0,
+      SIX: 0,
+    };
+
+    lottoNumbers.forEach((lotto) => {
+      const matchCount = lotto.filter((num) =>
+        winningNumbersArray.includes(num),
+      ).length;
+      const hasBonus = lotto.includes(Number(bonusNumber));
+
+      if (matchCount === 6) {
+        stats.SIX += 1;
+      } else if (matchCount === 5 && hasBonus) {
+        stats.BONUS += 1;
+      } else if (matchCount >= 3 && matchCount <= 5) {
+        stats[STATS_MAPPING[matchCount]] += 1;
+      }
+    });
+
+    return stats;
+  }
+
+  printResults(stats) {
+    const messages = [
+      `3개 일치 (${PRIZE_MONEY.THREE}) - ${stats.THREE}개`,
+      `4개 일치 (${PRIZE_MONEY.FOUR}) - ${stats.FOUR}개`,
+      `5개 일치 (${PRIZE_MONEY.FIVE}) - ${stats.FIVE}개`,
+      `5개 일치, 보너스 볼 일치 (${PRIZE_MONEY.BONUS}) - ${stats.BONUS}개`,
+      `6개 일치 (${PRIZE_MONEY.SIX}) - ${stats.SIX}개`,
+    ];
+
+    messages.forEach((msg) => Console.print(msg));
   }
 }
 
