@@ -1,5 +1,5 @@
 import App from '../src/App.js';
-import { ERROR_MESSAGES } from '../src/messages.js';
+import { ERROR_MESSAGES } from '../src/constants/messages.js';
 
 describe('Validation 테스트', () => {
   let app;

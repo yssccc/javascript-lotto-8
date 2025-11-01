@@ -1,5 +1,6 @@
 import App from '../src/App.js';
 import { MissionUtils } from '@woowacourse/mission-utils';
+import outputView from '../src/view/outputView.js';
 
 describe('로또 결과 count 테스트', () => {
   let app;
@@ -35,7 +36,7 @@ describe('로또 결과 count 테스트', () => {
 
       const logSpy = jest.spyOn(MissionUtils.Console, 'print');
 
-      app.printResults(stats);
+      outputView.printMatchResults(stats);
 
       expect(logSpy).toHaveBeenCalledWith('3개 일치 (5,000원) - 1개');
       expect(logSpy).toHaveBeenCalledWith('4개 일치 (50,000원) - 0개');
