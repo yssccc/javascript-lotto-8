@@ -104,7 +104,7 @@ class App {
       bonusNumber,
     );
     this.printResults(stats);
-    this.printProfitResults(stats, purchaseCount);
+    this.printProfitResults(stats, purchaseAmount);
   }
 
   purchaseAmountValidation(purchaseAmount) {
