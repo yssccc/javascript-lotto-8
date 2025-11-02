@@ -3,6 +3,7 @@ import { Random } from '@woowacourse/mission-utils';
 import inputView from './view/inputView.js';
 import outputView from './view/outputView.js';
 import { ERROR_MESSAGES } from './constants/messages.js';
+import Lotto from './model/Lotto.js';
 
 const LOTTO_PRICE = 1000;
 const LOTTO_COUNT = 6;
@@ -66,12 +67,11 @@ class App {
 
   async run() {
     const purchaseAmount = await this.getPurchaseAmount();
-
     const purchaseCount = purchaseAmount / LOTTO_PRICE;
     outputView.printPurchaseSuccess(purchaseCount);
 
-    const lottoNumbers = this.generateRandomNumbers(purchaseCount);
-    outputView.printLottoNumbers(lottoNumbers);
+    const lottos = this.generateLottos(purchaseCount);
+    outputView.printLottoNumbers(lottos.map((lotto) => lotto.getNumbers()));
 
     const winningNumbers = await this.getWinningNumbers();
 
@@ -83,11 +83,7 @@ class App {
 
     outputView.printWinningStatistics();
 
-    const stats = this.statsResult(
-      lottoNumbers,
-      winningNumbersArray,
-      bonusNumber,
-    );
+    const stats = this.statsResult(lottos, winningNumbersArray, bonusNumber);
     outputView.printMatchResults(stats);
 
     const profitRatio = this.calculateProfitRatio(stats, purchaseAmount);
@@ -150,20 +146,24 @@ class App {
     }
   }
 
-  generateRandomNumbers(count) {
-    const myLottoNumbersArray = [];
-    for (let i = 0; i < count; i++) {
-      const myLottoNumber = Random.pickUniqueNumbersInRange(
-        LOTTO_MIN,
-        LOTTO_MAX,
-        LOTTO_COUNT,
-      );
-      myLottoNumbersArray.push(myLottoNumber);
-    }
-    return myLottoNumbersArray;
+  generateOneLotto() {
+    const numbers = Random.pickUniqueNumbersInRange(
+      LOTTO_MIN,
+      LOTTO_MAX,
+      LOTTO_COUNT,
+    );
+    return new Lotto(numbers);
   }
 
-  statsResult(lottoNumbers, winningNumbersArray, bonusNumber) {
+  generateLottos(count) {
+    const lottos = [];
+    for (let i = 0; i < count; i++) {
+      lottos.push(this.generateOneLotto());
+    }
+    return lottos;
+  }
+
+  statsResult(lottos, winningNumbersArray, bonusNumber) {
     const stats = {
       THREE: 0,
       FOUR: 0,
@@ -171,11 +171,10 @@ class App {
       BONUS: 0,
       SIX: 0,
     };
-    lottoNumbers.forEach((lotto) => {
-      const matchCount = lotto.filter((num) =>
-        winningNumbersArray.includes(num),
-      ).length;
-      const hasBonus = lotto.includes(Number(bonusNumber));
+
+    lottos.forEach((lotto) => {
+      const matchCount = lotto.countMatch(winningNumbersArray);
+      const hasBonus = lotto.hasBonus(Number(bonusNumber));
 
       if (matchCount === 6) {
         stats.SIX += 1;
