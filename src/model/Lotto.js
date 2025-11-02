@@ -1,8 +1,5 @@
+import LOTTO from '../constants/lotto.js';
 import { ERROR_MESSAGES } from '../constants/messages.js';
-
-const LOTTO_COUNT = 6;
-const LOTTO_MIN = 1;
-const LOTTO_MAX = 45;
 
 class Lotto {
   #numbers;
@@ -13,24 +10,39 @@ class Lotto {
   }
 
   #validate(numbers) {
-    if (!Array.isArray(numbers)) {
-      throw new Error(ERROR_MESSAGES.INVALID_INPUT);
-    }
+    this.#checkNumberFormat(numbers);
+    this.#checkNumberRange(numbers);
+    this.#checkNumberCount(numbers);
+    this.#checkDuplicates(numbers);
+  }
 
-    if (numbers.length !== LOTTO_COUNT) {
-      throw new Error(ERROR_MESSAGES.INVALID_WINNING_NUM_COUNT);
-    }
-
-    const uniqueNumbers = new Set(numbers);
-    if (uniqueNumbers.size !== LOTTO_COUNT) {
-      throw new Error(ERROR_MESSAGES.DUPLICATED_NUMBER);
-    }
-
+  #checkNumberFormat(numbers) {
     numbers.forEach((num) => {
-      if (num < LOTTO_MIN || num > LOTTO_MAX) {
+      if (!/^(0|[1-9]\d*)$/.test(num)) {
+        throw new Error(ERROR_MESSAGES.INVALID_INPUT);
+      }
+    });
+  }
+
+  #checkNumberRange(numbers) {
+    numbers.forEach((num) => {
+      const n = Number(num);
+      if (n < LOTTO.MIN_NUMBER || n > LOTTO.MAX_NUMBER) {
         throw new Error(ERROR_MESSAGES.OUT_OF_RANGE);
       }
     });
+  }
+
+  #checkNumberCount(numbers) {
+    if (numbers.length !== LOTTO.COUNT) {
+      throw new Error(ERROR_MESSAGES.INVALID_WINNING_NUM_COUNT);
+    }
+  }
+
+  #checkDuplicates(numbers) {
+    if (new Set(numbers).size !== numbers.length) {
+      throw new Error(ERROR_MESSAGES.DUPLICATED_NUMBER);
+    }
   }
 
   getNumbers() {

@@ -2,8 +2,9 @@ import App from '../src/App.js';
 import { MissionUtils } from '@woowacourse/mission-utils';
 import outputView from '../src/view/outputView.js';
 import Lotto from '../src/model/Lotto.js';
+import LottoStats from '../src/model/LottoStats.js';
 
-describe('로또 결과 count 테스트', () => {
+describe('로또 결과 stats 테스트', () => {
   let app;
 
   beforeEach(() => {
@@ -23,7 +24,11 @@ describe('로또 결과 count 테스트', () => {
       const winningNumbersArray = [1, 2, 3, 4, 5, 6];
       const bonusNumber = 40;
 
-      const stats = app.statsResult(lottos, winningNumbersArray, bonusNumber);
+      const stats = LottoStats.computeStats(
+        lottos,
+        winningNumbersArray,
+        bonusNumber,
+      );
 
       expect(stats.SIX).toBe(1);
       expect(stats.THREE).toBe(1);

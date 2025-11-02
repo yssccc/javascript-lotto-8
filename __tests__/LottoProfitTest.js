@@ -1,6 +1,7 @@
 import App from '../src/App.js';
 import { Console } from '@woowacourse/mission-utils';
 import outputView from '../src/view/outputView.js';
+import LottoStats from '../src/model/LottoStats.js';
 
 describe('수익률 계산', () => {
   let app;
@@ -21,7 +22,7 @@ describe('수익률 계산', () => {
 
     const printSpy = jest.spyOn(Console, 'print').mockImplementation(() => {});
 
-    const profitRatio = app.calculateProfitRatio(stats, purchaseAmount)
+    const profitRatio = LottoStats.calculateProfitRatio(stats, purchaseAmount);
     outputView.printProfit(profitRatio);
 
     const expectedTotalPrize =
