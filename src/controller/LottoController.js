@@ -1,6 +1,5 @@
 import inputView from '../view/inputView.js';
 import outputView from '../view/outputView.js';
-
 import LottoGenerator from '../model/LottoGenerator.js';
 import LottoStats from '../model/LottoStats.js';
 import LOTTO from '../constants/lotto.js';
@@ -59,8 +58,7 @@ class LottoController {
 
   async #handleWinningNumbers() {
     const winningNumbers = await this.getWinningNumbers();
-    const winningNumbersArray = parseWinningNumbers(winningNumbers);
-
+    const winningNumbersArray = parseWinningNumbers(winningNumbers).map(Number);
     const bonusNumber = await this.getBonusNumber(winningNumbersArray);
 
     return { winningNumbersArray, bonusNumber };
