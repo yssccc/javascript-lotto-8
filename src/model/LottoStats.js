@@ -38,10 +38,19 @@ class LottoStats {
   }
 
   static #updateStats(stats, matchCount, hasBonus) {
-    if (matchCount === 6) stats.SIX += 1;
-    else if (matchCount === 5 && hasBonus) stats.BONUS += 1;
-    else if (matchCount >= 3 && matchCount <= 5)
+    if (matchCount === 6) {
+      stats.SIX += 1;
+      return;
+    }
+
+    if (matchCount === 5 && hasBonus) {
+      stats.BONUS += 1;
+      return;
+    }
+
+    if (matchCount >= 3 && matchCount <= 5) {
       stats[STATS_MAPPING[matchCount]] += 1;
+    }
   }
 
   static calculateTotalPrize(stats) {
