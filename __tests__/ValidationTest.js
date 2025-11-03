@@ -20,6 +20,13 @@ describe('Validation 테스트', () => {
         ERROR_MESSAGES.INVALID_PURCHASE_AMOUNT,
       );
     });
+    test('최대 안전 정수값 넘는 구매 금액 입력', () => {
+      const tooLargeNumber = (Number.MAX_SAFE_INTEGER + 1).toString();
+      expect(() => validatePurchaseAmount(tooLargeNumber)).toThrow(
+        ERROR_MESSAGES.PURCHASE_AMOUNT_TOO_LARGE,
+      );
+    });
+
     test('정상 입력', () => {
       expect(() => validatePurchaseAmount('3000')).not.toThrow();
     });

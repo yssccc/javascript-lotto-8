@@ -17,6 +17,7 @@ const ERROR_MESSAGES = Object.freeze({
   DUPLICATED_NUMBER: `${ERROR_PREFIX} 중복된 숫자가 있습니다.`,
   OUT_OF_RANGE: `${ERROR_PREFIX} 숫자는 1부터 45 사이여야 합니다.`,
   BONUS_NUMBER_DUPLICATE: `${ERROR_PREFIX} 보너스 번호가 당첨 번호와 중복됩니다.`,
+  PURCHASE_AMOUNT_TOO_LARGE: `${ERROR_PREFIX} 구매 가능한 최대 금액을 초과했습니다.`,
 });
 
 const PRIZE_MONEY = Object.freeze({
